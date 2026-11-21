@@ -28,7 +28,7 @@ export function BrandSelector() {
             {brand.label}
           </span>
           <span className="hidden text-xs text-muted-foreground sm:inline">
-            Paket demo
+            Paket
           </span>
         </TabsTrigger>
       ))}

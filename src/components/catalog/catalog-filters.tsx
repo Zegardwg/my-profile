@@ -17,13 +17,38 @@ export function CatalogFilters({
     key: "minPrice" | "maxPrice" | "minQuota" | "minValidity",
     raw: string,
   ) {
-    onChange({ ...value, [key]: Math.max(0, Number(raw) || 0) });
+    const clearedMaximum = key === "maxPrice" && raw === "";
+    onChange({ ...value, [key]: clearedMaximum ? Infinity : Math.max(0, Number(raw) || 0) });
   }
   return (
     <div className="space-y-5">
+      <div>
+        <label
+          htmlFor={prefix + "-information"}
+          className="mb-2 block text-xs font-semibold"
+        >
+          Status informasi
+        </label>
+        <select
+          id={prefix + "-information"}
+          className={fieldClass}
+          value={value.informationStatus ?? "all"}
+          onChange={(e) =>
+            onChange({
+              ...value,
+              informationStatus: e.target
+                .value as ProductFilters["informationStatus"],
+            })
+          }
+        >
+          <option value="all">Semua informasi</option>
+          <option value="demo">Data demo</option>
+          <option value="verified">Diperiksa manual</option>
+        </select>
+      </div>
       <fieldset>
         <legend className="mb-3 text-sm font-semibold">
-          Rentang harga demo (Rp)
+          Rentang harga paket (Rp)
         </legend>
         <div className="grid grid-cols-2 gap-3">
           <div>
@@ -55,7 +80,8 @@ export function CatalogFilters({
               type="number"
               min="0"
               step="1000"
-              value={value.maxPrice}
+              placeholder="Tanpa batas"
+              value={Number.isFinite(value.maxPrice) ? value.maxPrice : ""}
               onChange={(event) => numeric("maxPrice", event.target.value)}
               className={fieldClass}
             />
@@ -112,7 +138,7 @@ export function CatalogFilters({
           htmlFor={prefix + "-availability"}
           className="mb-2 block text-sm font-semibold"
         >
-          Ketersediaan demo
+          Ketersediaan paket
         </label>
         <select
           id={prefix + "-availability"}

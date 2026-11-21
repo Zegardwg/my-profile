@@ -14,7 +14,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ComparisonSummary } from "@/components/compare/comparison-summary";
-import { demoProducts, brandNames } from "@/data/demo-products";
+import {
+  useCatalog,
+  CatalogLoading,
+} from "@/components/products/catalog-provider";
+import { brandNames } from "@/data/demo-products";
 import {
   defaultFilters,
   filterProducts,
@@ -26,13 +30,15 @@ import type { ProductFilters, ProductSort } from "@/types/product";
 
 const brands: ProductFilters["brand"][] = ["all", "xl", "smartfren", "axis"];
 export function CatalogBrowser() {
+  const { activeProducts: products, loading } = useCatalog();
   const [filters, setFilters] = useState<ProductFilters>({ ...defaultFilters });
   const [sort, setSort] = useState<ProductSort>("price-asc");
-  const result = sortProducts(filterProducts(demoProducts, filters), sort);
+  const result = sortProducts(filterProducts(products, filters), sort);
   const clear = () => {
     setFilters({ ...defaultFilters });
     setSort("price-asc");
   };
+  if (loading) return <CatalogLoading />;
   return (
     <div className="min-w-0">
       <div className="mb-6 flex flex-wrap items-end gap-4">
@@ -41,7 +47,7 @@ export function CatalogBrowser() {
             htmlFor="catalog-search"
             className="mb-2 block text-sm font-semibold"
           >
-            Cari contoh paket
+            Cari paket di katalog
           </label>
           <input
             id="catalog-search"
@@ -87,7 +93,7 @@ export function CatalogBrowser() {
               </SheetTrigger>
               <SheetContent className="w-[min(90vw,24rem)]! overflow-y-auto">
                 <SheetHeader>
-                  <SheetTitle>Filter paket demo</SheetTitle>
+                  <SheetTitle>Filter paket</SheetTitle>
                   <SheetDescription>
                     Perubahan langsung diterapkan pada hasil katalog.
                   </SheetDescription>
@@ -110,7 +116,10 @@ export function CatalogBrowser() {
               </SheetContent>
             </Sheet>
             <p role="status" className="py-3 text-sm text-muted-foreground">
-              {result.length} dari {demoProducts.length} paket demo
+              {result.length} dari {products.length} paket{" "}
+              {products.every((p) => p.informationStatus === "demo")
+                ? "demo"
+                : "lokal"}
             </p>
             <div>
               <label htmlFor="catalog-sort" className="sr-only">
@@ -168,7 +177,7 @@ export function CatalogBrowser() {
                 ) : (
                   <EmptyState
                     title="Belum ada paket yang sesuai"
-                    description="Tidak ada contoh yang memenuhi seluruh filter. Hapus pencarian atau sesuaikan harga, kuota, masa aktif, dan ketersediaan."
+                    description="Tidak ada paket yang memenuhi seluruh filter. Hapus pencarian atau sesuaikan harga, kuota, masa aktif, dan ketersediaan."
                     action={
                       <Button className="min-h-12 rounded-xl" onClick={clear}>
                         Bersihkan filter

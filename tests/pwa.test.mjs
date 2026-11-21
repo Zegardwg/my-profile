@@ -61,7 +61,7 @@ test("offline documents, Flight failures, local assets and unknown-page fallback
     const response = await w.dispatch("fetch", { request: { url: origin + path, method: "GET", headers: new Headers(), mode: "navigate" } });
     assert.equal(response.headers.get("content-type"), "text/html");
   }
-  const flight = await w.dispatch("fetch", { request: new Request(origin + "/catalog?_rsc=abc", { headers: { rsc: "1" } }) });
+  const flight = await w.dispatch("fetch", { request: new Request(origin + "/finder?_rsc=abc", { headers: { rsc: "1" } }) });
   assert.equal(flight.headers.get("content-type"), "text/html");
   const fallback = await w.dispatch("fetch", { request: { url: origin + "/missing", method: "GET", headers: new Headers(), mode: "navigate" } });
   assert.equal(await fallback.text(), "public release");

@@ -7,11 +7,11 @@ export const brandNames: Record<Brand, string> = {
   axis: "AXIS",
 };
 export const usageNames: Record<Usage, string> = {
-  social: "WhatsApp / Social Media",
-  streaming: "YouTube / Streaming",
-  gaming: "Gaming",
-  work: "Work / Study",
-  general: "General Usage",
+  social: "WhatsApp dan media sosial",
+  streaming: "YouTube dan video daring",
+  gaming: "Bermain gim",
+  work: "Kerja dan belajar",
+  general: "Pemakaian umum",
 };
 type Seed = readonly [Brand, string, number, number, number, Usage, boolean];
 // Fictional fixtures only. No commercial offer or verified operator benefit.
@@ -44,6 +44,15 @@ export const demoProducts: readonly Product[] = seeds.map(
     quotaGb,
     validityDays,
     available,
+    category: usageNames[usage],
+    placeholderId: "package",
+    sourceUrl: "",
+    lastVerifiedAt: "",
+    informationStatus: "demo",
+    archived: false,
+    createdAt: "2026-11-18T00:00:00.000Z",
+    updatedAt: "2026-11-18T00:00:00.000Z",
+    revision: 1,
     usages: [usage, ...(usage === "general" ? [] : ["general" as const])],
     benefits: [
       "Ilustrasi kuota utama " + quotaGb + " GB",

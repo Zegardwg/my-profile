@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
@@ -72,7 +72,7 @@ pada build produksi. `next dev` tetap untuk HMR dan tidak menyediakan mode offli
 
 Buka aplikasi online hingga status **Siap digunakan offline**, lalu gunakan
 **Pasang aplikasi** atau menu Chrome Android **Tambahkan ke layar utama**.
-Produksi wajib memakai HTTPS. Seluruh data tetap demo dan registrasi resmi
+Produksi wajib memakai HTTPS. Paket contoh ditandai sebagai demo. Registrasi resmi
 memerlukan internet. Pembaruan tersedia melalui tombol **Perbarui sekarang**;
 tombol memuat ulang halaman, sehingga selesaikan presentasi terlebih dahulu.
 
@@ -82,3 +82,26 @@ dan server produksi pada port 3100). Jalankan tes PWA sendirian karena tes
 menulis sementara worker untuk memverifikasi pembaruan, lalu memulihkannya.
 
 [Implementasi, hasil QA dan batas pengujian Phase 5](docs/phase-5-review.md).
+
+
+## Penjualan kartu perdana
+
+Beranda menjual tiga kartu fisik: XL, Smartfren dan AXIS. Sentuh kartu untuk melihat kemasan, harga, kuota, masa aktif dan cara bayar. Foto kemasan lokal berada di public/images/products/. Finder dan perbandingan menampilkan data lokal dan membedakan paket demo dari rincian yang telah diperiksa promotor. Alamat /catalog lama dialihkan ke /finder.
+
+### Persiapan tablet
+
+1. Pilih **Mode promotor → Pengaturan jual**. Pada setiap merek, isi harga, jumlah kartu fisik, kuota, masa aktif dan manfaat sesuai barang yang tersedia. Isi tanggal pemeriksaan setelah memeriksa penawaran. Harga kosong atau nol, stok kosong, atau rincian yang belum diperiksa menutup checkout berbayar.
+2. Pada **Atur promo**, aktifkan bonus untuk pembelian XL/Smartfren atau sesi pembagian AXIS tanpa pembelian. Sesi gratis memerlukan jatah dan stok AXIS. Mengaktifkan kembali sesi setelah menonaktifkannya memulai jatah baru.
+3. Kembali ke **Mode pelanggan**. Pilih kartu lalu terapkan kode **XLSMART** untuk memasukkan satu bonus AXIS seharga Rp0 ke invoice yang sama. Pembelian AXIS reguler hanya berisi kartu yang dibeli. Gunakan **Punya kode kartu gratis?** untuk klaim mandiri selama sesi aktif.
+4. Pilih **Lanjut bayar** untuk membuat invoice lokal dan melihat instruksi QRIS atau tunai. Klaim gratis memakai **Konfirmasi pengambilan** dan melewati pembayaran. Invoice yang terbuka bisa dimuat ulang atau dibuka kembali melalui **Pengaturan jual**.
+5. Promotor memeriksa penerimaan uang, menandai invoice lunas, lalu mengonfirmasi penyerahan kartu. Pembuatan invoice mencadangkan stok. Serah terima mengurangi stok fisik untuk setiap baris termasuk bonus. Batalkan invoice tertunda apabila transaksi batal dan uang belum diterima. Invoice yang belum selesai terus mencadangkan stok sampai ditangani.
+
+QRIS statis memakai gambar lokal public/images/qris-merchant.png. Poster bertuliskan **DEWABLOX.ID ROBLOX** dan nama penerima yang terbaca dari kode adalah **Jawastore.biz.id, Pengiri**. Cocokkan dengan aplikasi pembayaran dan nominal invoice sebelum transfer. Pembayaran berlangsung di aplikasi pembayar. Sales kit tidak menerima notifikasi pelunasan otomatis.
+
+IndexedDB menyimpan data per profil browser dan origin. Pergantian mode hanya mengubah antarmuka. Seluruh invoice lokal dapat dibuka oleh pengguna perangkat yang sama. Tidak ada pengumpulan identitas pelanggan, pembatasan klaim per orang, autentikasi promotor, atau sinkronisasi antarperangkat. Pengelolaan cloud memerlukan backend. Pembaruan skema mempertahankan data produk lama. Harga satu perdana yang telah diperiksa per merek dapat diwariskan. Stok fisik awal harus dihitung oleh promotor.
+
+**Cadangan pengaturan kartu** mengekspor harga, informasi dan stok tiga merek ke JSON versi 1. Impor menampilkan pratinjau, meminta konfirmasi, memeriksa identitas merek dan menolak penggantian stok saat invoice masih terbuka. Cadangan ini tidak memuat invoice atau sesi promo. Membersihkan data situs dapat menghapus seluruh catatan perangkat. Simpan cadangan di tempat aman.
+
+### Menyiapkan rilis
+
+Jalankan npm ci, npm run lint, npm run typecheck, npm test dan npm run build. Jalankan server produksi dan uji dengan npm run test:browser:promo serta npm run test:browser:pwa secara terpisah. Pengujian browser memakai Edge, XLSMART_PLAYWRIGHT_MODULE dan XLSMART_QA_URL. Pertahankan origin HTTPS saat merilis. Buka aplikasi pada tablet hingga status **Siap digunakan offline**, lalu periksa alur kasir dan stok sebelum melayani pelanggan.

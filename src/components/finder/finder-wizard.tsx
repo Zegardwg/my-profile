@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button";
 import { CatalogProductCard } from "@/components/catalog/catalog-product-card";
 import { ComparisonSummary } from "@/components/compare/comparison-summary";
 import { EmptyState } from "@/components/shared/empty-state";
-import { demoProducts, brandNames, usageNames } from "@/data/demo-products";
+import {
+  useCatalog,
+  CatalogLoading,
+} from "@/components/products/catalog-provider";
+import { brandNames, usageNames } from "@/data/demo-products";
 import { formatPrice } from "@/lib/product-presentation";
 import { recommendProducts } from "@/lib/recommendation-engine";
 import type { Brand, FinderRequirements, Usage } from "@/types/product";
@@ -23,12 +27,16 @@ const steps = ["Anggaran", "Penggunaan", "Masa aktif", "Merek", "Rekomendasi"];
 const field = "min-h-12 w-full rounded-xl border bg-white px-4 text-sm";
 
 export function FinderWizard() {
+  const { activeProducts: products, loading } = useCatalog();
   const [step, setStep] = useState(0);
   const [requirements, setRequirements] = useState<FinderRequirements>({
     ...initial,
   });
   const heading = useRef<HTMLHeadingElement>(null);
-  const recommendations = useMemo(() => recommendProducts(demoProducts, requirements), [requirements]);
+  const recommendations = useMemo(
+    () => recommendProducts(products, requirements),
+    [products, requirements],
+  );
   const validBudget =
     Number.isFinite(requirements.budget) && requirements.budget > 0;
   function go(next: number) {
@@ -42,8 +50,31 @@ export function FinderWizard() {
     setRequirements({ ...initial });
     go(0);
   }
+  if (loading) return <CatalogLoading />;
   return (
     <div>
+      <label
+        htmlFor="finder-status"
+        className="mb-2 block text-xs font-semibold"
+      >
+        Status informasi paket
+      </label>
+      <select
+        id="finder-status"
+        className={field + " mb-6 max-w-md"}
+        value={requirements.informationStatus ?? "all"}
+        onChange={(e) =>
+          setRequirements({
+            ...requirements,
+            informationStatus: e.target
+              .value as FinderRequirements["informationStatus"],
+          })
+        }
+      >
+        <option value="all">Semua (demo dan diperiksa manual)</option>
+        <option value="demo">Hanya data demo</option>
+        <option value="verified">Hanya diperiksa manual</option>
+      </select>
       <ol
         aria-label="Langkah pencari paket"
         className="mb-8 grid grid-cols-5 gap-2"
@@ -347,7 +378,7 @@ export function FinderWizard() {
             {recommendations.length ? (
               <>
                 <p className="mb-4 text-sm font-semibold">
-                  {recommendations.length} rekomendasi demo yang memenuhi syarat
+                  {recommendations.length} rekomendasi yang memenuhi syarat
                 </p>
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                   {recommendations.map((result, index) => (

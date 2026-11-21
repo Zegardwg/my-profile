@@ -1,6 +1,8 @@
 ﻿import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { CatalogProvider } from "@/components/products/catalog-provider";
+import { ModeProvider } from "@/components/mode/mode-provider";
 import { ComparisonProvider } from "@/components/compare/comparison-provider";
 import type { Viewport } from "next";
 import { PwaProvider } from "@/components/pwa/pwa-provider";
@@ -20,16 +22,23 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   applicationName: pwaConfig.name,
-  appleWebApp: { capable: true, statusBarStyle: "default", title: pwaConfig.shortName },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: pwaConfig.shortName,
+  },
   icons: { apple: "/icons/icon-192.png" },
   title: "XLSMART • Personal Sales Kit",
   description:
-    "Alat presentasi personal multi-brand. Seluruh paket dan harga merupakan data demo, bukan penawaran resmi operator.",
+    "Alat presentasi personal multi-brand. Data demo dan catatan pemeriksaan manual dibedakan; aplikasi bukan penawaran resmi operator.",
   robots: { index: false, follow: false },
 };
 
 export const viewport: Viewport = {
-  width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: pwaConfig.themeColor,
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: pwaConfig.themeColor,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -40,7 +49,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body>
         <PwaProvider>
-          <ComparisonProvider>{children}</ComparisonProvider>
+          <ModeProvider>
+            <CatalogProvider>
+              <ComparisonProvider>{children}</ComparisonProvider>
+            </CatalogProvider>
+          </ModeProvider>
           <PwaUpdateNotice />
         </PwaProvider>
       </body>

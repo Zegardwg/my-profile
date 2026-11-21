@@ -16,7 +16,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useComparison } from "@/components/compare/comparison-provider";
 import { MAX_COMPARISON } from "@/lib/comparison";
-import { DEMO_LABEL, brandNames } from "@/data/demo-products";
+import { productInformationLabel } from "@/lib/product-information";
+import { ProductMetadata } from "./product-metadata";
+import { brandNames } from "@/data/demo-products";
 import { formatPrice } from "@/lib/product-presentation";
 import { useReveal } from "@/hooks/use-reveal";
 import { ProductVisual } from "./product-visual";
@@ -54,7 +56,12 @@ export function CatalogProductCard({
   return (
     <article
       ref={ref}
-      aria-label={product.name + ", paket demo"}
+      aria-label={
+        product.name +
+        (product.informationStatus === "demo"
+          ? ", paket demo"
+          : ", diperiksa manual")
+      }
       className="product-card-entry h-full min-w-0"
       style={{ "--card-order": Math.min(order, 5) } as CSSProperties}
     >
@@ -65,7 +72,9 @@ export function CatalogProductCard({
         className="package-card h-full gap-0 border-0 py-0 text-white ring-0"
       >
         <CardContent className="flex h-full flex-col p-6">
-          <p className="package-demo-label">{DEMO_LABEL}</p>
+          <p className="package-demo-label">
+            {productInformationLabel(product)}
+          </p>
           <div className="mt-4 flex items-center justify-between gap-3">
             <span className="package-brand">{brandNames[product.brand]}</span>
             <span className="package-validity">
@@ -76,7 +85,11 @@ export function CatalogProductCard({
           <div className="relative mt-3">
             <h3 className="package-name pr-14">{product.name}</h3>
             <div className="absolute top-0 right-0">
-              <ProductVisual brand={product.brand} compact />
+              <ProductVisual
+                brand={product.brand}
+                placeholderId={product.placeholderId}
+                compact
+              />
             </div>
             <p className="package-quota mt-4">
               {product.quotaGb}
@@ -87,13 +100,17 @@ export function CatalogProductCard({
             <div className="mt-2">
               <p className="package-price">{formatPrice(product.price)}</p>
               <p className="mt-1 text-[11px] text-white/90">
-                Harga ilustrasi per paket
+                {product.informationStatus === "demo"
+                  ? "Harga ilustrasi per paket"
+                  : "Harga catatan lokal; periksa sumber"}
               </p>
             </div>
           </div>
           <div className="my-5 border-t border-white/20" />
           <p className="mb-4 text-[10px] font-semibold tracking-[0.14em] text-white/90 uppercase">
-            Kenali paket demo ini
+            {product.informationStatus === "demo"
+              ? "Kenali paket demo ini"
+              : "Kenali informasi paket"}
           </p>
           <ul className="space-y-3">
             <li className="package-benefit">
@@ -127,7 +144,10 @@ export function CatalogProductCard({
               <div>
                 <p className="text-[13px] font-semibold">Masa aktif jelas</p>
                 <p className="mt-0.5 text-xs leading-5 text-white/90">
-                  {product.validityDays} hari dalam simulasi
+                  {product.validityDays} hari{" "}
+                  {product.informationStatus === "demo"
+                    ? "dalam simulasi"
+                    : "menurut catatan"}
                 </p>
               </div>
             </li>
@@ -141,8 +161,13 @@ export function CatalogProductCard({
                 }
                 aria-hidden="true"
               />
-              {product.available ? "Tersedia · demo" : "Tidak tersedia · demo"}
+              {product.available ? "Tersedia" : "Tidak tersedia"}
+              {" \u00b7 "}
+              {product.informationStatus === "demo" ? "demo" : "catatan lokal"}
             </p>
+            <div className="mb-4 text-white/90">
+              <ProductMetadata product={product} />
+            </div>
             <div className="flex flex-col gap-2.5">
               <ProductDetails product={product} onColor />
               <Button

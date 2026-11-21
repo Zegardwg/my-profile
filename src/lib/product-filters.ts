@@ -3,11 +3,12 @@
 export const defaultFilters: ProductFilters = {
   brand: "all",
   minPrice: 0,
-  maxPrice: 250000,
+  maxPrice: Infinity,
   minQuota: 0,
   minValidity: 0,
   availability: "all",
   keyword: "",
+  informationStatus: "all",
 };
 export function filterProducts(
   products: readonly Product[],
@@ -16,6 +17,8 @@ export function filterProducts(
   const query = filters.keyword.trim().toLocaleLowerCase("id-ID");
   return products.filter(
     (product) =>
+      !product.archived &&
+      (!filters.informationStatus || filters.informationStatus === "all" || product.informationStatus === filters.informationStatus) &&
       (filters.brand === "all" || product.brand === filters.brand) &&
       product.price >= filters.minPrice &&
       product.price <= filters.maxPrice &&

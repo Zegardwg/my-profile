@@ -11,12 +11,12 @@ export function SmartPackageFinder() {
         <SlidersHorizontal className="size-6" aria-hidden="true" />
       </span>
       <div className="min-w-0 flex-1 basis-56">
-        <p className="eyebrow mb-2 text-primary">Smart Package Finder</p>
+        <p className="eyebrow mb-2 text-primary">Pencari paket</p>
         <h2 id="finder-title" className="text-xl font-bold">
           Mulai dari kebutuhanmu.
         </h2>
         <p className="mt-1 text-sm leading-6 text-muted-foreground">
-          Empat langkah sederhana untuk menemukan contoh paket yang sesuai.
+          Empat langkah sederhana untuk menemukan paket yang sesuai.
         </p>
       </div>
       <Link

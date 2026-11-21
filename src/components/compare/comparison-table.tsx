@@ -4,21 +4,28 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { CatalogProductCard } from "@/components/catalog/catalog-product-card";
-import { demoProducts, DEMO_LABEL, brandNames } from "@/data/demo-products";
+import {
+  useCatalog,
+  CatalogLoading,
+} from "@/components/products/catalog-provider";
+import { ProductMetadata } from "@/components/catalog/product-metadata";
+import { productInformationLabel } from "@/lib/product-information";
+import { brandNames } from "@/data/demo-products";
 import { formatPrice } from "@/lib/product-presentation";
 import type { Product } from "@/types/product";
 import { useComparison } from "./comparison-provider";
 
 export function ComparisonTable() {
   const { ids, toggle, clear } = useComparison();
+  const { activeProducts, loading } = useCatalog();
   const products = ids.flatMap((id) => {
-    const product = demoProducts.find((item) => item.id === id);
+    const product = activeProducts.find((item) => item.id === id);
     return product ? [product] : [];
   });
   const rows: { label: string; content: (product: Product) => ReactNode }[] = [
     { label: "Merek", content: (product) => brandNames[product.brand] },
     {
-      label: "Harga demo / paket",
+      label: "Harga / paket",
       content: (product) => formatPrice(product.price),
     },
     { label: "Kuota utama", content: (product) => product.quotaGb + " GB" },
@@ -27,7 +34,7 @@ export function ComparisonTable() {
       content: (product) => product.validityDays + " hari",
     },
     {
-      label: "Manfaat ilustrasi",
+      label: "Manfaat paket",
       content: (product) => (
         <ul className="space-y-2">
           {product.benefits.map((benefit) => (
@@ -47,19 +54,19 @@ export function ComparisonTable() {
       ),
     },
     {
-      label: "Ketersediaan demo",
-      content: (product) =>
-        product.available ? "Tersedia (demo)" : "Tidak tersedia (demo)",
+      label: "Ketersediaan",
+      content: (product) => (product.available ? "Tersedia" : "Tidak tersedia"),
     },
   ];
+  if (loading) return <CatalogLoading />;
   return (
     <div className="min-w-0">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <Link
-          href="/catalog"
+          href="/finder"
           className="action-link border bg-white text-primary"
         >
-          Kembali ke katalog
+          Kembali ke pencari paket
         </Link>
         <p role="status" className="text-sm text-muted-foreground">
           {ids.length}/3 paket dipilih
@@ -74,16 +81,16 @@ export function ComparisonTable() {
         </Button>
       </div>
       <p className="mb-5 text-xs leading-6 text-muted-foreground">
-        Hanya ID paket disimpan di perangkat hingga kamu menghapusnya. Tanpa data pelanggan. Pada layar kecil, geser tabel secara
-        horizontal.
+        Hanya ID paket disimpan di perangkat hingga kamu menghapusnya. Tanpa
+        data pelanggan. Pada layar kecil, geser tabel secara horizontal.
       </p>
       {!products.length ? (
         <EmptyState
           title="Belum ada paket untuk dibandingkan"
-          description="Pilih tombol Bandingkan pada katalog atau hasil finder. Maksimal tiga paket dapat dipilih, termasuk paket yang tidak tersedia untuk kebutuhan presentasi."
+          description="Pilih tombol Bandingkan pada hasil pencarian. Maksimal tiga paket dapat dipilih, termasuk paket yang tidak tersedia untuk kebutuhan presentasi."
           action={
-            <Link href="/catalog" className="action-link bg-primary text-white">
-              Pilih paket demo
+            <Link href="/finder" className="action-link bg-primary text-white">
+              Pilih paket
             </Link>
           }
         />
@@ -97,7 +104,8 @@ export function ComparisonTable() {
           >
             <table className="w-full min-w-[640px] border-collapse text-left text-sm">
               <caption className="sr-only">
-                Perbandingan maksimal tiga paket fiktif, bukan penawaran resmi.
+                Perbandingan maksimal tiga paket; perhatikan label status
+                informasi.
               </caption>
               <thead>
                 <tr>
@@ -105,7 +113,7 @@ export function ComparisonTable() {
                     scope="col"
                     className="min-w-40 border-b bg-secondary p-5 align-top"
                   >
-                    Atribut demo
+                    Atribut paket
                   </th>
                   {products.map((product) => (
                     <th
@@ -114,11 +122,12 @@ export function ComparisonTable() {
                       className="min-w-60 max-w-80 border-b p-5 align-top"
                     >
                       <p className="mb-3 text-[10px] leading-5 font-semibold text-primary">
-                        {DEMO_LABEL}
+                        {productInformationLabel(product)}
                       </p>
                       <p className="font-heading text-lg font-bold">
                         {product.name}
                       </p>
+                      <ProductMetadata product={product} />
                       <Button
                         variant="outline"
                         className="mt-4 min-h-11 rounded-xl"

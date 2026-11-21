@@ -94,15 +94,15 @@ export function PwaProvider({ children }: { children: ReactNode }) {
     void navigator.serviceWorker.register("/sw.js", { scope: "/", updateViaCache: "none" }).then((reg) => {
       if (!alive) return;
       registration.current = reg;
-      setWaiting(Boolean(reg.waiting));
+      setWaiting(Boolean(reg.active && reg.waiting));
       readStatus(reg.active);
       const found = () => {
         const worker = reg.installing;
         if (!worker) return;
         const changed = () => {
           if (!alive) return;
-          if (worker.state === "installed") { setWaiting(Boolean(reg.waiting)); readStatus(reg.active); }
-          if (worker.state === "activated") readStatus(worker);
+          if (worker.state === "installed") { setWaiting(Boolean(reg.active && reg.waiting)); readStatus(reg.active); }
+          if (worker.state === "activated") { setWaiting(Boolean(reg.waiting)); readStatus(worker); }
           if (worker.state === "redundant") setError("Penyimpanan atau pembaruan offline belum berhasil. Versi sebelumnya tetap dapat digunakan jika sudah tersimpan.");
         };
         worker.addEventListener("statechange", changed);

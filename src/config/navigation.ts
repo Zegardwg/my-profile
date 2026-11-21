@@ -1,9 +1,7 @@
 export const navigation = [
   { href: "/", label: "Beranda" },
-  { href: "/catalog", label: "Katalog" },
   { href: "/finder", label: "Cari paket" },
-  { href: "/compare", label: "Bandingkan" },
-  { href: "/#edukasi", label: "Panduan" },
+  { href: "/activation-guide", label: "Panduan registrasi" },
   { href: "/trust", label: "Kepercayaan" },
 ] as const;
 export const customerNavigation = [

@@ -1,38 +1,38 @@
-import { CustomerTrustHub } from "@/features/home/components/customer-trust-hub";
+﻿import { FeaturedPackages } from "@/features/catalog/components/featured-packages";
+import Link from "next/link";
 import { AppHeader } from "@/components/layout/app-header";
 import { AppFooter } from "@/components/layout/app-footer";
-import { HeroSection } from "@/features/home/components/hero-section";
-import { SmartPackageFinder } from "@/features/catalog/components/smart-package-finder";
-import { FeaturedPackages } from "@/features/catalog/components/featured-packages";
-import { RegistrationEducation } from "@/features/home/components/registration-education";
 
 export default function Home() {
   return (
     <>
-      <a
-        href="#main-content"
-        className="fixed top-3 left-3 z-60 -translate-y-24 rounded-xl bg-primary px-5 py-3 font-semibold text-white focus:translate-y-0"
-      >
+      <a href="#main-content" className="sr-only focus:not-sr-only">
         Langsung ke konten
       </a>
       <AppHeader />
-      <main id="main-content" tabIndex={-1}>
-        <div id="beranda" className="page-container pt-7 sm:pt-9">
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-            <p>YOUR EVERYDAY CONNECTION COMPANION</p>
-            <span className="flex items-center gap-2">
-              <span
-                className="size-1.5 rounded-full bg-primary"
-                aria-hidden="true"
-              />
-              Mode presentasi · Data demo
-            </span>
-          </div>
-          <HeroSection />
-          <SmartPackageFinder />
+      <main id="main-content" className="bg-white">
+        <div className="page-container py-7 sm:py-12">
           <FeaturedPackages />
-          <RegistrationEducation />
-          <CustomerTrustHub />
+          <nav
+            aria-label="Bantuan pelanggan"
+            className="mt-5 flex flex-wrap gap-x-7 border-t pt-2 text-sm font-medium text-primary"
+          >
+            <Link
+              className="inline-flex min-h-12 items-center"
+              href="/activation-guide"
+            >
+              Panduan registrasi
+            </Link>
+            <Link className="inline-flex min-h-12 items-center" href="/trust">
+              Pertanyaan pelanggan
+            </Link>
+            <Link
+              className="inline-flex min-h-12 items-center"
+              href="/promoter"
+            >
+              Profil promotor
+            </Link>
+          </nav>
         </div>
       </main>
       <AppFooter />

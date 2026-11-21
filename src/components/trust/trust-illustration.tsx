@@ -32,7 +32,7 @@ export function TrustIllustration({
       aria-label={
         portrait
           ? "Placeholder foto profil, bukan foto promotor sebenarnya"
-          : "Ilustrasi placeholder edukasi, bukan dokumen atau layar sistem resmi"
+          : "Contoh ilustrasi edukasi, bukan dokumen atau layar sistem resmi"
       }
       className={
         "relative flex items-center justify-center overflow-hidden rounded-2xl border border-primary/10 bg-secondary " +
@@ -46,7 +46,7 @@ export function TrustIllustration({
         <Icon className="size-12" strokeWidth={1.4} />
       </span>
       <span className="absolute right-4 bottom-3 left-4 text-center text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
-        {portrait ? "Foto placeholder · DATA DEMO" : "Ilustrasi placeholder"}
+        {portrait ? "Foto placeholder · DATA DEMO" : "Contoh ilustrasi"}
       </span>
     </div>
   );

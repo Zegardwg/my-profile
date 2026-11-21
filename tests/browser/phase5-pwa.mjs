@@ -1,3 +1,4 @@
+﻿import { showRecommendations } from "./finder-steps.mjs";
 ﻿import assert from "node:assert/strict";
 import { mkdir, readFile, writeFile, mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -59,20 +60,8 @@ try {
     console.log("PASS cold offline routes + no page overflow at " + width + "x" + height);
   }
   await page.setViewportSize({ width: 1024, height: 768 });
-  await goto("/catalog");
-  await page.getByLabel("Cari contoh paket").fill("FOCUS");
-  await page.getByText("2 dari 18 paket demo", { exact: true }).waitFor();
-  await page.getByLabel("Cari contoh paket").fill("");
-  await page.getByRole("tab", { name: "XL", exact: true }).click();
-  await page.getByText("6 dari 18 paket demo", { exact: true }).waitFor();
-  await page.getByRole("button", { name: "Filter paket", exact: true }).click();
-  const drawer = page.getByRole("dialog");
-  await drawer.getByLabel("Maksimum", { exact: true }).fill("50000");
-  await drawer.getByLabel("Ketersediaan demo", { exact: true }).selectOption("available");
-  await drawer.getByRole("button", { name: "Lihat 1 hasil", exact: true }).click();
-  assert.equal(await page.locator("main article:visible").count(), 1);
-  await goto("/catalog");
-  await page.getByLabel("Urutkan paket").selectOption("quota-desc");
+  await goto("/finder");
+  await showRecommendations(page);
   for (let i=0;i<3;i++) await page.locator("main article:visible").nth(i).getByRole("button", { name: /^Bandingkan / }).click();
   await page.getByRole("link", { name: /Bandingkan \(3\/3\)/ }).click();
   await page.waitForURL("**/compare"); await ready();
@@ -81,13 +70,13 @@ try {
   await noOverflow("filled comparison landscape");
   await page.reload(); await ready(); await page.locator("thead th").nth(3).waitFor();
   await page.screenshot({ path: "docs/qa/phase5-compare-offline-landscape.png" });
-  console.log("PASS offline filters, sort, document-link navigation, comparison and reload persistence");
+  console.log("PASS offline finder results, document-link navigation, comparison and reload persistence");
   await page.getByRole("button", { name: "Buka navigasi" }).click();
   await page.getByRole("navigation", { name: "Navigasi mobile" }).getByRole("link", { name: "Cari paket", exact: true }).click();
   await page.waitForURL("**/finder"); await ready();
   await page.getByLabel("Anggaran maksimum (Rupiah)").fill("100000");
   await page.getByRole("button", { name: "Lanjut", exact: true }).click();
-  await page.getByLabel("Gaming", { exact: true }).check();
+  await page.getByLabel("Bermain gim", { exact: true }).check();
   await page.getByRole("button", { name: "Lanjut", exact: true }).click();
   await page.getByLabel("Preferensi masa aktif", { exact: true }).selectOption("30");
   await page.getByLabel("Wajib minimal masa aktif yang dipilih").check();
@@ -119,12 +108,24 @@ try {
   await context.setOffline(false);
   await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
   await page.clock.install({ time: new Date("2027-01-01T12:00:00Z") });
-  await goto("/catalog");
+  await goto("/finder");
   await page.getByRole("status").filter({ hasText: /Informasi katalog lebih dari 30 hari/ }).waitFor();
   await page.clock.setSystemTime(new Date());
   const repeat = await context.newPage(); await repeat.goto(origin + "/finder");
   await repeat.waitForFunction(() => Boolean(navigator.serviceWorker.controller)); await repeat.close();
   console.log("PASS expired catalog warning and repeat visit");
+
+  // Persist a genuine local edit before applying a service-worker release update.
+  await goto("/management");
+  await page.getByRole("button", { name: "Pilih mode tampilan", exact: true }).first().click();
+  await page.getByRole("button", { name: "Gunakan mode promotor", exact: true }).click();
+  await page.getByRole("button", { name: "Atur kartu XL", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Atur kartu XL", exact: true });
+  await editor.getByLabel("Stok fisik (kartu)", { exact: true }).fill("17");
+  await editor.getByRole("button", { name: "Simpan pengaturan", exact: true }).click();
+  await editor.waitFor({ state: "hidden" });
+  await goto("/management");
+  await page.getByText(/17 siap dijual · 17 fisik/).waitFor();
 
   // A second release must wait, preserve active work, then reload only on explicit apply.
   const oldVersion = /"version":"([^"]+)"/.exec(originalWorker)[1];
@@ -137,6 +138,7 @@ try {
   await page.getByRole("button", { name: "Perbarui sekarang", exact: true }).click();
   await page.waitForEvent("load"); await ready();
   assert.equal(await activeVersion(), newVersion);
+  await page.getByText(/17 siap dijual · 17 fisik/).waitFor();
   assert.equal(await page.evaluate(() => localStorage.getItem("xlsmart-comparison-ids-v1")), beforeUpdateIds);
   assert.ok(await page.evaluate(async (version) => (await caches.keys()).includes("xlsmart-public-" + version), newVersion));
   await context.setOffline(true); await goto("/compare"); await page.locator("thead th").nth(3).waitFor();
@@ -147,3 +149,4 @@ try {
   await writeFile("public/sw.js", originalWorker);
   await context.close();
 }
+

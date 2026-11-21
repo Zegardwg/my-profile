@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { BrandMark } from "@/components/shared/brand-mark";
 import { navigation } from "@/config/navigation";
 import { MobileNavigation } from "./mobile-navigation";
+import { CatalogStorageNotice } from "@/components/products/catalog-provider";
+import { ModeSwitcher } from "@/components/mode/mode-provider";
 import { PwaStatus } from "@/components/pwa/pwa-status";
 
 export function AppHeader() {
@@ -31,16 +32,12 @@ export function AppHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-3">
-          <Link
-            href="/finder"
-            className="action-link hidden bg-primary text-white hover:bg-navy sm:inline-flex"
-          >
-            Temukan paket <ArrowUpRight aria-hidden="true" className="size-4" />
-          </Link>
+          <ModeSwitcher />
           <MobileNavigation />
         </div>
       </div>
       <PwaStatus />
+      <CatalogStorageNotice />
     </header>
   );
 }

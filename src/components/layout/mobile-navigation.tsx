@@ -34,7 +34,7 @@ export function MobileNavigation() {
         <SheetHeader>
           <SheetTitle>Jelajahi Sales Kit</SheetTitle>
           <SheetDescription>
-            Alat presentasi personal · versi demo
+            Alat presentasi personal
           </SheetDescription>
         </SheetHeader>
         <nav aria-label="Navigasi mobile" className="flex flex-col gap-2 px-6">

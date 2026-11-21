@@ -17,6 +17,8 @@ export function recommendProducts(
   return products
     .filter(
       (product) =>
+        !product.archived &&
+        (!requirements.informationStatus || requirements.informationStatus === "all" || product.informationStatus === requirements.informationStatus) &&
         product.available &&
         product.price <= requirements.budget &&
         product.validityDays > 0 &&
@@ -35,7 +37,7 @@ export function recommendProducts(
         product.brand === requirements.preferredBrand;
       const valuePoints = Math.min(
         20,
-        Math.round((product.quotaGb / product.price) * 30000),
+        product.price === 0 ? (product.quotaGb > 0 ? 20 : 0) : Math.round((product.quotaGb / product.price) * 30000),
       );
       const score =
         (usageMatch ? 40 : 0) +
@@ -43,7 +45,7 @@ export function recommendProducts(
         (brandMatch ? 10 : 0) +
         valuePoints;
       const reasons = [
-        "Tersedia dalam simulasi.",
+        product.informationStatus === "verified" ? "Tersedia menurut catatan lokal; diperiksa promotor, bukan verifikasi operator." : "Tersedia dalam simulasi.",
         "Harga paket dan estimasi kebutuhan 30 hari berada dalam anggaran.",
         usageMatch
           ? "Kategori penggunaan sesuai pilihanmu."

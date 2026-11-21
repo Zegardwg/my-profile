@@ -1,3 +1,4 @@
+import { XlRegistrationGuide } from "./xl-registration-guide";
 import { activationSteps, trustContent } from "@/config/customer-trust";
 import { TrustIllustration } from "./trust-illustration";
 import { SourceLinks, OfficialReferences } from "./source-links";
@@ -12,6 +13,7 @@ export function ActivationEducation() {
         </p>
         <PresentationMode slides={activationSteps} />
       </div>
+      <XlRegistrationGuide />
       <section
         aria-labelledby="current-rules"
         className="mb-8 rounded-2xl border bg-white p-6 sm:p-8"

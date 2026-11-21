@@ -29,7 +29,7 @@ export const trustContent = {
   identityDisclaimer:
     "Profil dan area di halaman ini adalah DATA DEMO, bukan identitas pegawai atau bukti penugasan.",
   privacyCommitment:
-    "Sales kit ini tidak meminta atau menyimpan NIK, foto KTP, wajah, OTP, ICCID, maupun kredensial akun pelanggan. Tidak ada akses kamera, formulir registrasi, atau pembayaran.",
+    "Sales kit ini tidak meminta atau menyimpan NIK, foto KTP, wajah, OTP, ICCID, maupun kredensial akun pelanggan. Pembayaran berlangsung melalui aplikasi QRIS pelanggan atau secara tunai kepada promotor.",
   profile: {
     displayName: "Promotor Contoh",
     area: "Area presentasi contoh — DATA DEMO",
@@ -71,7 +71,7 @@ export const trustContent = {
     {
       id: "offer",
       title: "Periksa penawaran sebenarnya",
-      body: "Cocokkan harga, kuota utama, kuota khusus, masa aktif, syarat, dan ketersediaan di kanal operator. Seluruh paket di katalog ini fiktif.",
+      body: "Cocokkan harga, kuota utama, kuota khusus, masa aktif, syarat, dan ketersediaan di kanal operator. Paket berlabel demo hanya untuk simulasi.",
     },
     {
       id: "registration",
@@ -155,9 +155,9 @@ export const trustContent = {
     },
     {
       id: "package",
-      question: "Apakah harga dan paket di katalog benar-benar tersedia?",
+      question: "Bagaimana saya memastikan harga dan ketersediaan paket?",
       answer:
-        "Tidak dapat disimpulkan dari katalog ini. Semua paket, harga, dan status ketersediaan adalah fiktif. Minta informasi aktual dari kanal resmi sebelum memutuskan.",
+        "Harga berlabel demo adalah contoh. Untuk paket yang sudah diperiksa promotor, lihat tanggal pemeriksaan dan minta konfirmasi harga serta stok sebelum membayar.",
     },
     {
       id: "refuse",
@@ -296,7 +296,7 @@ export const conversationScripts: readonly ConversationScript[] = [
     concern: "Apakah paket ini benar-benar bisa saya gunakan?",
     response:
       "Yang terlihat di sini contoh fiktif. Sebelum memilih, kita perlu memeriksa penawaran nyata, harga, masa aktif, dan ketentuannya di kanal operator.",
-    explanation: "Indikator tersedia pada katalog ini hanya status demo.",
+    explanation: "Ketersediaan mengikuti catatan lokal. Periksa label informasi dan konfirmasikan stok melalui kanal operator.",
     action:
       "Perlihatkan perbedaan data demo dan informasi aktual dari operator sebelum ada keputusan.",
     neverPromise:

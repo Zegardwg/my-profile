@@ -13,7 +13,6 @@ export function HeroSection() {
           <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-2 text-[11px] font-medium tracking-wide">
             <span className="size-1.5 rounded-full bg-mint" />
             PERSONAL SALES KIT <span className="text-white/50">/</span> V1.0
-            DEMO
           </p>
           <h1
             id="hero-title"
@@ -32,7 +31,7 @@ export function HeroSection() {
               href="/catalog"
               className="action-link bg-white text-navy hover:bg-blue-100"
             >
-              Jelajahi paket demo{" "}
+              Jelajahi katalog paket{" "}
               <ArrowUpRight aria-hidden="true" className="size-4" />
             </Link>
             <a
@@ -51,7 +50,7 @@ export function HeroSection() {
         <ImagePlaceholder className="min-h-80 bg-linear-to-br from-[#17488e] to-[#0b2b63] lg:min-h-100" />
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-6 py-4 text-[11px] text-blue-100/75 sm:px-10 xl:px-12">
-        <span>EXPLORE. UNDERSTAND. CONNECT.</span>
+        <span>Jelajahi pilihan koneksi.</span>
         <span>Alat presentasi personal · bukan situs resmi operator</span>
       </div>
     </section>

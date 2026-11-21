@@ -1,6 +1,9 @@
-﻿import { Info } from "lucide-react";
+"use client";
+import { useCatalog } from "@/components/products/catalog-provider";
+import { Info } from "lucide-react";
 import { DEMO_LABEL } from "@/data/demo-products";
 export function DemoNotice() {
+  const { activeProducts } = useCatalog();
   return (
     <aside
       aria-label="Informasi demonstrasi"
@@ -8,10 +11,15 @@ export function DemoNotice() {
     >
       <Info className="mt-1 size-4 shrink-0 text-primary" aria-hidden="true" />
       <p>
-        <strong className="block text-navy">{DEMO_LABEL}</strong>Alat presentasi
-        personal, bukan situs resmi atau bukti status karyawan XLSMART. Seluruh
-        harga, manfaat, dan ketersediaan fiktif. Registrasi hanya melalui kanal
-        resmi perusahaan.
+        <strong className="block text-navy">
+          {activeProducts.every((p) => p.informationStatus === "demo")
+            ? DEMO_LABEL
+            : "KATALOG LOKAL - PERIKSA STATUS INFORMASI"}
+        </strong>
+        Alat presentasi personal, bukan situs resmi atau bukti status karyawan
+        XLSMART. Perhatikan label setiap produk: demo berarti fiktif; diperiksa
+        manual adalah catatan promotor, bukan verifikasi operator. Registrasi
+        hanya melalui kanal resmi perusahaan.
       </p>
     </aside>
   );

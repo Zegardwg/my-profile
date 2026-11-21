@@ -48,7 +48,8 @@ try {
   }
   await page.setViewportSize({ width: 1024, height: 768 });
   await goto("/");
-  const hub = page.getByRole("region", { name: "Ruang untuk bertanya. Hak untuk memilih." });
+  await page.getByRole("button", { name: "Buka navigasi" }).click();
+  const hub = page.getByRole("navigation", { name: "Navigasi mobile" });
   for (const route of routes) assert.equal(await hub.locator('a[href="' + route + '"]').count(), 1);
   await hub.getByRole("link", { name: /Profil promotor/ }).click();
   await page.waitForURL("**/promoter");

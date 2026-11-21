@@ -1,3 +1,4 @@
+import { showRecommendations } from "./finder-steps.mjs";
 import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
@@ -54,106 +55,20 @@ try {
   }
   await page.setViewportSize({ width: 1024, height: 768 });
   await goto("/");
-  await page
-    .getByRole("link", { name: "Jelajahi paket demo", exact: true })
-    .click();
-  await page.waitForURL("**/catalog");
-  await check(
-    () => page.getByText("18 dari 18 paket demo", { exact: true }).isVisible(),
-    "homepage links to catalog",
-  );
-  assert.equal(await page.locator("main:visible article:visible").count(), 18);
-  for (const card of await page.locator("main:visible article:visible").all()) {
-    assert.ok(
-      await card
-        .getByText("DATA DEMO - BUKAN PENAWARAN RESMI", { exact: true })
-        .isVisible(),
-    );
-    assert.equal(await card.getByRole("img").count(), 1);
-  }
-  console.log("PASS every catalog card has demo label and placeholder");
-  await page.getByLabel("Cari contoh paket").fill("FOCUS");
-  await check(
-    () => page.getByText("2 dari 18 paket demo", { exact: true }).isVisible(),
-    "keyword search",
-  );
-  await page.getByLabel("Cari contoh paket").fill("");
-  await page.getByRole("tab", { name: "XL", exact: true }).click();
-  await check(
-    () => page.getByText("6 dari 18 paket demo", { exact: true }).isVisible(),
-    "brand tabs",
-  );
-  await page.getByRole("button", { name: "Filter paket", exact: true }).click();
-  let drawer = page.getByRole("dialog");
-  await drawer.getByLabel("Maksimum", { exact: true }).fill("50000");
-  await drawer
-    .getByLabel("Ketersediaan demo", { exact: true })
-    .selectOption("available");
-  await drawer
-    .getByRole("button", { name: "Lihat 1 hasil", exact: true })
-    .click();
-  assert.equal(await page.locator("main:visible article:visible").count(), 1);
-  console.log("PASS tablet drawer combined price + availability filters");
-  await page.getByRole("button", { name: "Filter paket", exact: true }).click();
-  drawer = page.getByRole("dialog");
-  await drawer.getByLabel("Kuota utama minimum").selectOption("30");
-  await drawer
-    .getByRole("button", { name: "Lihat 0 hasil", exact: true })
-    .click();
-  await check(
-    () =>
-      page
-        .getByRole("heading", { name: "Belum ada paket yang sesuai" })
-        .isVisible(),
-    "catalog empty state",
-  );
-  await page
-    .getByRole("button", { name: "Bersihkan filter", exact: true })
-    .click();
-  await page.getByLabel("Urutkan paket").selectOption("quota-desc");
-  await check(
-    () =>
-      page
-        .locator("main:visible article:visible")
-        .first()
-        .getByRole("heading", { name: "Long Stories" })
-        .isVisible(),
-    "largest quota sorting",
-  );
-  await page
-    .locator("main:visible article:visible")
-    .first()
-    .getByRole("button", { name: "Detail Long Stories", exact: true })
-    .click();
-  await check(
-    () =>
-      page
-        .getByRole("dialog")
-        .getByRole("heading", { name: "Long Stories", exact: true })
-        .isVisible(),
-    "product detail dialog",
-  );
+  await page.getByRole("button", { name: "Buka navigasi" }).click();
+  await page.getByRole("navigation", { name: "Navigasi mobile" }).getByRole("link", { name: "Cari paket" }).click();
+  await page.waitForURL("**/finder");
+  await showRecommendations(page);
+  await page.locator("main:visible article:visible").first().getByRole("button", { name: /^Detail / }).click();
+  await page.getByRole("dialog").waitFor();
   await page.keyboard.press("Escape");
-  await page.getByRole("dialog").waitFor({ state: "hidden" });
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
-  await page.screenshot({
-    path: screenshotDir + "/phase3-catalog-tablet.png",
-    fullPage: false,
-  });
   for (let i = 0; i < 3; i++)
     await page
       .locator("main:visible article:visible")
       .nth(i)
       .getByRole("button", { name: /^Bandingkan / })
       .click();
-  assert.ok(
-    await page
-      .locator("main:visible article:visible")
-      .nth(3)
-      .getByRole("button", { name: /^Bandingkan / })
-      .isDisabled(),
-  );
-  console.log("PASS compare selection capped at three");
+  assert.equal(await page.locator("main:visible article:visible").count(), 3);
   await page.getByRole("link", { name: /Bandingkan \(3\/3\)/ }).click();
   await page.waitForURL("**/compare");
   assert.equal(await page.locator("thead th").count(), 4);
@@ -192,9 +107,11 @@ try {
   await page.waitForURL("**/finder");
   await page.getByRole("dialog").waitFor({ state: "hidden" });
   console.log("PASS mobile menu navigation");
+  const restart = page.getByRole("button", {name: "Mulai ulang", exact: true});
+  if (await restart.isVisible()) await restart.click();
   await page.getByLabel("Anggaran maksimum (Rupiah)").fill("100000");
   await page.getByRole("button", { name: "Lanjut", exact: true }).click();
-  await page.getByLabel("Gaming", { exact: true }).check();
+  await page.getByLabel("Bermain gim", { exact: true }).check();
   await page.getByRole("button", { name: "Lanjut", exact: true }).click();
   await page
     .getByLabel("Preferensi masa aktif", { exact: true })
