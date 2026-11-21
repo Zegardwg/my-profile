@@ -39,7 +39,7 @@ import {
 } from "@/lib/product-repository";
 import { brandNames } from "@/data/demo-products";
 import { starterBrands, starterCategory } from "@/lib/starter-cards";
-import { formatPrice } from "@/lib/product-presentation";
+import { SalePrice } from "@/components/shared/sale-price";
 import type { Product } from "@/types/product";
 const field = "min-h-12 w-full min-w-0 rounded-xl border bg-white px-3 text-sm";
 export function ProductManagement() {
@@ -363,7 +363,7 @@ export function ProductManagement() {
               </div>
               <h3 className="mt-4 text-xl font-bold">{product.name}</h3>
               <p className="mt-2 text-lg font-semibold text-primary">
-                {formatPrice(product.price)}
+                <SalePrice price={product.price} originalPrice={product.originalPrice} />
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {product.quotaGb} GB · {product.validityDays} hari ·{" "}

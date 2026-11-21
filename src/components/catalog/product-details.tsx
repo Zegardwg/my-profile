@@ -16,7 +16,7 @@ import {
 import { ProductMetadata } from "./product-metadata";
 import { ProductVisual } from "./product-visual";
 import { brandNames } from "@/data/demo-products";
-import { formatPrice } from "@/lib/product-presentation";
+import { SalePrice } from "@/components/shared/sale-price";
 import type { Product } from "@/types/product";
 
 export function ProductDetails({
@@ -76,7 +76,12 @@ export function ProductDetails({
         <dl className="grid grid-cols-2 gap-4 rounded-xl bg-secondary p-4">
           <div>
             <dt className="text-xs text-muted-foreground">Harga paket</dt>
-            <dd className="mt-1 font-bold">{formatPrice(product.price)}</dd>
+            <dd className="mt-1 font-bold">
+              <SalePrice
+                price={product.price}
+                originalPrice={product.originalPrice}
+              />
+            </dd>
           </div>
           <div>
             <dt className="text-xs text-muted-foreground">Kuota utama</dt>
@@ -111,11 +116,10 @@ export function ProductDetails({
         </section>
 
         <p className="border-t pt-4 text-xs leading-6 text-muted-foreground">
-          Pembayaran diterima oleh promotor. Registrasi dilakukan di kanal resmi.
-          Konfirmasi penawaran nyata melalui kanal resmi operator.
+          Pembayaran diterima oleh promotor. Registrasi dilakukan di kanal
+          resmi. Konfirmasi penawaran nyata melalui kanal resmi operator.
         </p>
       </DialogContent>
     </Dialog>
   );
 }
-

@@ -19,7 +19,7 @@ import { MAX_COMPARISON } from "@/lib/comparison";
 import { productInformationLabel } from "@/lib/product-information";
 import { ProductMetadata } from "./product-metadata";
 import { brandNames } from "@/data/demo-products";
-import { formatPrice } from "@/lib/product-presentation";
+import { SalePrice } from "@/components/shared/sale-price";
 import { useReveal } from "@/hooks/use-reveal";
 import { ProductVisual } from "./product-visual";
 import { ProductDetails } from "./product-details";
@@ -98,7 +98,12 @@ export function CatalogProductCard({
               </span>
             </p>
             <div className="mt-2">
-              <p className="package-price">{formatPrice(product.price)}</p>
+              <p className="package-price">
+                <SalePrice
+                  price={product.price}
+                  originalPrice={product.originalPrice}
+                />
+              </p>
               <p className="mt-1 text-[11px] text-white/90">
                 {product.informationStatus === "demo"
                   ? "Harga ilustrasi per paket"

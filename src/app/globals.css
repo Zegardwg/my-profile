@@ -337,3 +337,163 @@
     scale: 1;
   }
 }
+
+/* The face carries the carrier identity. The offer below shares one comparison layout. */
+.starter-card {
+  --face: #11358e;
+  --face-light: #2159bc;
+  --foil: #b7dcff;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  border: 1px solid #d9dfeb;
+  border-radius: 18px;
+  background: white;
+  box-shadow: 0 3px 9px -6px #172d5035;
+  container-type: inline-size;
+}
+.starter-card[data-brand="smartfren"] {
+  --face: #7c1343;
+  --face-light: #b3255a;
+  --foil: #ffc0d6;
+}
+.starter-card[data-brand="axis"] {
+  --face: #462578;
+  --face-light: #6843a3;
+  --foil: #e2c9ff;
+}
+.starter-face {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  min-height: 136px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.15rem 1.4rem 1.05rem;
+  border-radius: 17px 17px 0 0;
+  color: white;
+  background: linear-gradient(115deg, var(--face) 24%, var(--face-light));
+}
+.starter-wordmark {
+  position: relative;
+  margin: 0;
+  font-size: clamp(1.85rem, 11cqi, 3rem);
+  font-weight: 750;
+  line-height: 1.05;
+  letter-spacing: -.065em;
+}
+.starter-engraving {
+  position: absolute;
+  right: -8%;
+  top: -65%;
+  display: grid;
+  width: 56%;
+  height: 250%;
+  place-items: center;
+  transform: rotate(35deg);
+  color: var(--foil);
+  opacity: .52;
+}
+.starter-engraving i {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.starter-engraving i:nth-child(2) { width: 88%; height: 94%; }
+.starter-engraving i:nth-child(3) { width: 76%; height: 88%; }
+.starter-engraving i:nth-child(4) { width: 64%; height: 82%; }
+.starter-engraving i:nth-child(5) { width: 52%; height: 76%; }
+.starter-engraving i:nth-child(6) { width: 40%; height: 70%; }
+.starter-engraving i:nth-child(7) { width: 28%; height: 64%; }
+.starter-engraving i:nth-child(8) { width: 16%; height: 58%; }
+.starter-card[data-brand="smartfren"] .starter-engraving {
+  right: -12%;
+  top: -53%;
+  height: 210%;
+  transform: rotate(-30deg);
+}
+.starter-card[data-brand="smartfren"] .starter-engraving i { border-radius: 40% 60% 70% 30%; }
+.starter-card[data-brand="axis"] .starter-engraving { transform: rotate(42deg); }
+.starter-card[data-brand="axis"] .starter-engraving i { border-radius: 13px; }
+.starter-chip {
+  position: absolute;
+  right: 1.4rem;
+  bottom: 1.25rem;
+  overflow: hidden;
+  width: 34px;
+  height: 25px;
+  border: 1px solid #ffffffa8;
+  border-radius: 6px;
+  background: linear-gradient(138deg, #eee5c9, #c2b391 52%, #f5ecd5);
+  box-shadow: 0 1px 3px #0003;
+}
+.starter-chip::before, .starter-chip::after {
+  content: "";
+  position: absolute;
+  inset: 28% 0;
+  border-block: 1px solid #8b7a58;
+}
+.starter-chip::after {
+  inset: -2px 25%;
+  border: 1px solid #8b7a58;
+  border-radius: 5px;
+  background: linear-gradient(140deg, #ddcfad, #e9dfc6);
+}
+.starter-body { display: flex; flex: 1; flex-direction: column; padding: 1.2rem 1.4rem 1.35rem; }
+.starter-price {
+  font-family: var(--font-jakarta), sans-serif;
+  color: #15233b;
+  font-size: clamp(1.5rem, 8.3cqi, 2.15rem);
+  font-weight: 750;
+  line-height: 1.15;
+  letter-spacing: -.055em;
+}
+.starter-price .inline-flex.flex-wrap { background: #fff1f2; }
+.starter-specs {
+  display: flex;
+  margin-top: 1rem;
+  padding-block: .8rem;
+  border-block: 1px solid #e4e8ef;
+}
+.starter-specs div { flex: 1; min-width: 0; }
+.starter-specs div + div { padding-left: 1rem; border-left: 1px solid #e4e8ef; }
+.starter-specs dt { font-size: .75rem; color: #52617a; }
+.starter-specs dd { font-size: 1.25rem; line-height: 1.4; font-weight: 700; letter-spacing: -.04em; }
+.starter-specs dd span { font-size: .875rem; font-weight: 500; letter-spacing: normal; }
+.starter-highlight { margin-top: .95rem; font-size: .8rem; line-height: 1.55; color: #52617a; }
+.starter-highlight strong { color: var(--face); }
+.starter-action {
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .6rem 1rem;
+  border-radius: 10px;
+  background: var(--face);
+  color: white;
+  font-size: .9rem;
+  font-weight: 600;
+}
+.starter-action::after { content: ""; position: absolute; inset: 0; border-radius: 18px; }
+.starter-card:focus-within { outline: 3px solid var(--face-light); outline-offset: 3px; }
+@media (hover: hover) {
+  .starter-card:hover { border-color: var(--face-light); box-shadow: 0 8px 22px -15px var(--face); }
+  .starter-card:hover .starter-action { background: var(--face-light); }
+}
+@container (max-width: 245px) {
+  .starter-body, .starter-face { padding-inline: 1rem; }
+  .starter-chip { right: 1rem; width: 26px; height: 20px; }
+  .starter-face { min-height: 116px; }
+}
+
+
+@media (min-width: 720px) {
+  .starter-grid:has(s) .starter-price-block { min-height: 4.6rem; }
+}

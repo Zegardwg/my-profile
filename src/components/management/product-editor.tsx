@@ -19,9 +19,15 @@ import type { Product } from "@/types/product";
 
 type Draft = Omit<
   Product,
-  "price" | "quotaGb" | "validityDays" | "benefits" | "restrictions"
+  | "price"
+  | "originalPrice"
+  | "quotaGb"
+  | "validityDays"
+  | "benefits"
+  | "restrictions"
 > & {
   price: string;
+  originalPrice: string;
   quotaGb: string;
   validityDays: string;
   benefits: string;
@@ -30,6 +36,7 @@ type Draft = Omit<
 const draftOf = (product: Product): Draft => ({
   ...product,
   price: String(product.price),
+  originalPrice: String(product.originalPrice ?? ""),
   quotaGb: String(product.quotaGb),
   validityDays: String(product.validityDays),
   benefits: product.benefits.join("\n"),
@@ -124,6 +131,9 @@ export function ProductEditor({
     const result = productSchema.safeParse({
       ...draft,
       price: number(draft.price),
+      originalPrice: draft.originalPrice
+        ? number(draft.originalPrice)
+        : undefined,
       quotaGb: number(draft.quotaGb),
       validityDays: number(draft.validityDays),
       benefits: split(draft.benefits),
@@ -226,6 +236,21 @@ export function ProductEditor({
                 />
               </Field>
               <Field
+                name="originalPrice"
+                label="Harga normal sebelum diskon (Rp, opsional)"
+                error={errors.originalPrice}
+              >
+                <input
+                  {...attributes("originalPrice")}
+                  type="number"
+                  inputMode="numeric"
+                  min="1"
+                  step="1"
+                  value={draft.originalPrice}
+                  onChange={(e) => update("originalPrice", e.target.value)}
+                />
+              </Field>
+              <Field
                 name="quotaGb"
                 label="Kuota utama (GB)"
                 error={errors.quotaGb}
@@ -268,7 +293,9 @@ export function ProductEditor({
                   onChange={(e) => update("category", e.target.value)}
                 />
               </Field>
-              <datalist id="product-categories"><option value={starterCategory} /></datalist>
+              <datalist id="product-categories">
+                <option value={starterCategory} />
+              </datalist>
               <Field
                 name="usages"
                 label="Kebutuhan utama"

@@ -1,4 +1,5 @@
 ﻿"use client";
+import { ZodError } from "zod";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ import {
 } from "@/lib/counter-model";
 import { localVerificationDay } from "@/lib/product-schema";
 import { formatPrice } from "@/lib/product-presentation";
+import { SalePrice } from "@/components/shared/sale-price";
 import {
   ReceiptDialog,
   invoiceStatus,
@@ -87,6 +89,9 @@ function SettingsEditor({
                 await saveOffer({
                   ...o,
                   price: Number(f.get("price")),
+                  originalPrice: f.get("originalPrice")
+                    ? Number(f.get("originalPrice"))
+                    : undefined,
                   stock: Number(f.get("stock")),
                   quota: Number(f.get("quota")),
                   days: Number(f.get("days")),
@@ -103,7 +108,11 @@ function SettingsEditor({
               onSaved();
             } catch (ex) {
               setError(
-                ex instanceof Error ? ex.message : "Gagal menyimpan perubahan.",
+                ex instanceof ZodError
+                  ? ex.issues[0].message
+                  : ex instanceof Error
+                    ? ex.message
+                    : "Gagal menyimpan perubahan.",
               );
               setBusy(false);
             }
@@ -128,6 +137,22 @@ function SettingsEditor({
                   </label>
                 ))}
               </div>
+              <label className="text-sm font-medium">
+                Harga normal sebelum diskon (Rp, opsional)
+                <Input
+                  className="mt-1 min-h-11"
+                  name="originalPrice"
+                  type="number"
+                  min={1}
+                  max={100000000}
+                  step={1}
+                  defaultValue={o.originalPrice}
+                />
+                <span className="mt-1 block text-xs font-normal text-muted-foreground">
+                  Harga jual adalah jumlah yang dibayar. Kosongkan harga normal
+                  untuk menghapus diskon.
+                </span>
+              </label>
               <label className="text-sm font-medium">
                 Manfaat (satu per baris)
                 <textarea
@@ -242,8 +267,15 @@ export function SalesSettings() {
               <div>
                 <h3 className="font-bold">{brandNames[o.brand]}</h3>
                 <p className="mt-1 text-sm">
-                  {o.price ? formatPrice(o.price) : "Harga belum diatur"} ·{" "}
-                  {remainingStock(o, invoices)} siap dijual · {o.stock} fisik
+                  {o.price ? (
+                    <SalePrice
+                      price={o.price}
+                      originalPrice={o.originalPrice}
+                    />
+                  ) : (
+                    "Harga belum diatur"
+                  )}{" "}
+                  · {remainingStock(o, invoices)} siap dijual · {o.stock} fisik
                 </p>
               </div>
               <Button

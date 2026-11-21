@@ -31,6 +31,7 @@ export async function listProducts(): Promise<Product[]> {
           brand: o.brand,
           name: "Kartu perdana " + brandNames[o.brand],
           price: o.price,
+          originalPrice: o.originalPrice,
           quotaGb: o.quota,
           validityDays: o.days,
           benefits: o.benefits.split("\n").filter(Boolean),

@@ -138,7 +138,7 @@ export const trustContent = {
       id: "identity",
       question: "Apakah profil ini membuktikan promotor resmi?",
       answer:
-        "Tidak. Nama, foto placeholder, dan area profil merupakan data demo. Periksa identitas asli dari perusahaan dan konfirmasikan penugasan melalui kanal perusahaan yang Anda cari secara mandiri.",
+        "Tidak. Nama, foto profil, dan area profil merupakan data demo. Periksa identitas asli dari perusahaan dan konfirmasikan penugasan melalui kanal perusahaan yang Anda cari secara mandiri.",
     },
     {
       id: "face",

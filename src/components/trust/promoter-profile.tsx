@@ -1,6 +1,6 @@
 import { HandHeart, Layers3, MapPin } from "lucide-react";
 import { trustContent, profileSlides } from "@/config/customer-trust";
-import { TrustIllustration } from "./trust-illustration";
+import Image from "next/image";
 import { PresentationMode } from "./presentation-mode";
 export function PromoterProfile() {
   const profile = trustContent.profile;
@@ -14,7 +14,14 @@ export function PromoterProfile() {
       </div>
       <div className="grid gap-7 lg:grid-cols-[300px_minmax(0,1fr)]">
         <div className="min-w-0">
-          <TrustIllustration kind="person" portrait />
+          <Image
+            src="/images/promotor.webp"
+            alt="Potret promotor mengenakan seragam biru XLSMART"
+            width={640}
+            height={800}
+            unoptimized
+            className="mx-auto h-auto w-full max-w-xs rounded-2xl"
+          />
           <p className="mt-3 text-xs leading-6 text-muted-foreground">
             {trustContent.identityDisclaimer}
           </p>

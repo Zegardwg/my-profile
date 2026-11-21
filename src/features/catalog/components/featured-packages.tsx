@@ -1,21 +1,22 @@
-﻿"use client";
+"use client";
 import { useState, useSyncExternalStore } from "react";
-import { BadgeCheck, Gift, CardSim, ArrowUpRight, Wallet } from "lucide-react";
+import { Check, Gift, ArrowUpRight, ArrowRight } from "lucide-react";
 import { useCounter } from "@/hooks/use-counter";
 import { brandNames } from "@/data/demo-products";
-import { remainingStock, remainingClaims } from "@/lib/counter-model";
-import { formatPrice } from "@/lib/product-presentation";
+import {
+  remainingStock,
+  remainingClaims,
+  offerHighlights,
+} from "@/lib/counter-model";
+import { SalePrice } from "@/components/shared/sale-price";
+import Image from "next/image";
+import Link from "next/link";
 import {
   SaleDialog,
   ReceiptDialog,
 } from "@/features/home/components/promo-checkout";
 import type { Brand } from "@/types/product";
 
-const surfaces = {
-  xl: "from-[#184bea] to-[#08248a]",
-  smartfren: "from-[#ba1958] to-[#79113c]",
-  axis: "from-[#7e3bc6] to-[#45217e]",
-};
 function subscribeReceipt(callback: () => void) {
   window.addEventListener("hashchange", callback);
   return () => window.removeEventListener("hashchange", callback);
@@ -36,6 +37,7 @@ export function FeaturedPackages() {
     );
   const receipt = useSyncExternalStore(subscribeReceipt, receiptId, () => "");
   const data = counter?.data;
+  const highlights = data && offerHighlights(data.offers, data.invoices);
   const latest = data?.recent[0];
   const axisStock = data
     ? remainingStock(
@@ -45,21 +47,37 @@ export function FeaturedPackages() {
     : 0;
   return (
     <section aria-labelledby="starter-title" id="perdana">
-      <header className="mb-7 sm:mb-9">
-        <h1
-          id="starter-title"
-          className="font-heading text-4xl font-semibold tracking-tight text-navy sm:text-5xl"
+      <header className="mb-7 flex flex-wrap items-center justify-between gap-4 sm:mb-9">
+        <div>
+          <h1
+            id="starter-title"
+            className="font-heading text-4xl font-semibold tracking-tight text-navy sm:text-5xl"
+          >
+            Pilih kartu perdana.
+          </h1>
+          <p className="mt-3 text-muted-foreground">
+            Lihat isi kartu, lalu pilih pembayaran QRIS atau tunai.
+          </p>
+        </div>
+        <Link
+          href="/promoter"
+          className="inline-flex items-center gap-3 rounded-full border border-blue-100 bg-blue-50/60 py-1.5 pr-4 pl-1.5 text-sm font-semibold text-navy hover:bg-blue-100"
         >
-          Pilih kartu perdana.
-        </h1>
-        <p className="mt-3 text-muted-foreground">
-          Lihat isi kartu, lalu pilih pembayaran QRIS atau tunai.
-        </p>
+          <Image
+            src="/images/promotor.webp"
+            alt=""
+            width={48}
+            height={48}
+            unoptimized
+            className="size-12 rounded-full object-cover object-top"
+          />
+          Profil promotor <ArrowUpRight className="size-4" aria-hidden="true" />
+        </Link>
       </header>
       {!counter && (
         <div
           aria-label="Memuat penawaran"
-          className="grid gap-4 sm:grid-cols-3"
+          className="grid gap-4 min-[720px]:grid-cols-3"
         >
           {[1, 2, 3].map((n) => (
             <div
@@ -72,7 +90,7 @@ export function FeaturedPackages() {
       {counter?.error && <p role="alert">{counter.error}</p>}
       {data && (
         <>
-          <div className="grid gap-4 sm:grid-cols-3 lg:gap-6">
+          <div className="starter-grid grid gap-5 min-[720px]:grid-cols-3 lg:gap-6">
             {data.offers.map((stored) => {
               const o = stored.verifiedAt
                 ? stored
@@ -84,89 +102,120 @@ export function FeaturedPackages() {
                 axisStock > 0 &&
                 stock > 0 &&
                 o.price > 0;
+              const benefits = o.benefits
+                .split("\n")
+                .map((line) => line.trim())
+                .filter(Boolean)
+                .slice(0, 2);
               return (
                 <article
                   key={o.brand}
                   aria-label={"Kartu perdana " + brandNames[o.brand]}
-                  className={
-                    "relative flex min-w-0 flex-col rounded-[1.6rem] bg-linear-to-br p-5 text-white lg:p-7 " +
-                    surfaces[o.brand]
-                  }
+                  className="starter-card"
+                  data-brand={o.brand}
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h2 className="text-lg font-semibold">
-                      {brandNames[o.brand]}
-                    </h2>
-                    {o.days > 0 && (
-                      <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">
-                        {o.days} hari
-                      </span>
-                    )}
-                  </div>
-                  <div className="mt-4 min-h-24">
-                    {o.quota > 0 ? (
-                      <>
-                        <p className="text-5xl font-bold tracking-tight">
-                          {o.quota.toLocaleString("id-ID")}
-                          <span className="ml-1 text-2xl">GB</span>
-                        </p>
-                        <p className="mt-2 text-xl font-bold">
-                          {o.price
-                            ? formatPrice(o.price)
-                            : "Harga belum diatur"}
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="break-words text-3xl font-bold tracking-tight lg:text-4xl">
-                          {o.price ? formatPrice(o.price) : "Kartu perdana"}
-                        </p>
-                        <p className="mt-2 text-sm">
-                          {o.price ? "Harga per kartu" : "Harga belum diatur"}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                  <ul className="mb-6 grid gap-3 border-t border-white/30 pt-4 text-sm">
-                    <li className="flex gap-2">
-                      <CardSim size={18} aria-hidden="true" />1 kartu SIM fisik
-                    </li>
-                    <li className="flex gap-2">
-                      <Wallet size={18} aria-hidden="true" />
-                      QRIS atau tunai
-                    </li>
-                    {o.benefits
-                      .split("\n")
-                      .filter(Boolean)
-                      .slice(0, 2)
-                      .map((b, i) => (
-                        <li key={i} className="flex gap-2 break-words">
-                          <BadgeCheck
-                            size={18}
-                            className="shrink-0"
-                            aria-hidden="true"
-                          />
-                          {b}
-                        </li>
+                  <div className="starter-face">
+                    <div aria-hidden="true" className="starter-engraving">
+                      {Array.from({ length: 8 }, (_, i) => (
+                        <i key={i} />
                       ))}
-                    {bonus && (
-                      <li className="flex gap-2">
-                        <Gift size={18} aria-hidden="true" />
-                        Bonus 1 kartu AXIS dengan XLSMART
-                      </li>
+                    </div>
+                    <span className="relative text-[11px] font-semibold tracking-[.12em] uppercase">
+                      Kartu perdana
+                    </span>
+                    <h2 className="starter-wordmark">{brandNames[o.brand]}</h2>
+                    <span aria-hidden="true" className="starter-chip" />
+                  </div>
+                  <div className="starter-body">
+                    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                      <p className="text-xs font-medium text-slate-600">
+                        Harga per kartu
+                      </p>
+                      <p className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                        <span
+                          aria-hidden="true"
+                          className={
+                            stock > 0
+                              ? "size-1.5 rounded-full bg-emerald-600"
+                              : "size-1.5 rounded-full bg-slate-400"
+                          }
+                        />
+                        {stock > 0 ? "Tersedia" : "Stok belum tersedia"}
+                      </p>
+                    </div>
+                    <div className="starter-price-block mt-1.5">
+                      {o.price ? (
+                        <p className="starter-price">
+                          <SalePrice
+                            price={o.price}
+                            originalPrice={o.originalPrice}
+                          />
+                        </p>
+                      ) : (
+                        <p className="text-lg font-semibold text-slate-700">
+                          Harga belum diatur
+                        </p>
+                      )}
+                    </div>
+                    {(o.quota > 0 || o.days > 0) && (
+                      <dl className="starter-specs">
+                        {o.quota > 0 && (
+                          <div>
+                            <dt>Kuota utama</dt>
+                            <dd>
+                              {o.quota.toLocaleString("id-ID")} <span>GB</span>
+                            </dd>
+                          </div>
+                        )}
+                        {o.days > 0 && (
+                          <div>
+                            <dt>Masa aktif</dt>
+                            <dd>
+                              {o.days} <span>hari</span>
+                            </dd>
+                          </div>
+                        )}
+                      </dl>
                     )}
-                  </ul>
-                  <div className="mt-auto">
-                    <p className="mb-3 text-sm text-white/90">
-                      {stock > 0 ? "Tersedia" : "Stok belum tersedia"}
-                    </p>
-                    <button
-                      className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-white px-3 font-semibold text-navy after:absolute after:inset-0 after:rounded-[1.6rem] hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2"
-                      onClick={() => select({ brand: o.brand, free: false })}
-                    >
-                      {stock > 0 && o.price ? "Pilih & bayar" : "Lihat kartu"}
-                      <ArrowUpRight size={17} />
-                    </button>
+                    {!!highlights?.[o.brand].length && (
+                      <p className="starter-highlight">
+                        <strong>{highlights[o.brand].join(" · ")}</strong> di
+                        antara kartu yang tersedia.
+                      </p>
+                    )}
+                    {(benefits.length > 0 || bonus) && (
+                      <ul className="mt-4 grid gap-2 text-sm leading-5 text-slate-700">
+                        {benefits.map((benefit, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <Check
+                              size={15}
+                              className="mt-0.5 shrink-0"
+                              aria-hidden="true"
+                            />
+                            {benefit}
+                          </li>
+                        ))}
+                        {bonus && (
+                          <li className="flex items-start gap-2 font-semibold">
+                            <Gift
+                              size={16}
+                              className="mt-0.5 shrink-0"
+                              aria-hidden="true"
+                            />
+                            Bonus 1 kartu AXIS dengan XLSMART
+                          </li>
+                        )}
+                      </ul>
+                    )}
+                    <div className="mt-auto pt-5">
+                      <button
+                        className="starter-action"
+                        onClick={() => select({ brand: o.brand, free: false })}
+                      >
+                        {stock > 0 && o.price ? "Pilih & bayar" : "Lihat kartu"}
+                        <ArrowRight size={18} aria-hidden="true" />
+                      </button>
+                    </div>
                   </div>
                 </article>
               );

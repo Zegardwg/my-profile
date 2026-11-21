@@ -29,6 +29,7 @@ import {
   type Invoice,
 } from "@/lib/counter-model";
 import { formatPrice } from "@/lib/product-presentation";
+import { SalePrice } from "@/components/shared/sale-price";
 import type { Brand } from "@/types/product";
 
 function Lines({ lines }: { lines: Line[] }) {
@@ -47,7 +48,9 @@ function Lines({ lines }: { lines: Line[] }) {
                 : "1 kartu gratis "}
             {brandNames[l.brand]}
           </span>
-          <strong>{formatPrice(l.price)}</strong>
+          <span className="font-bold">
+            <SalePrice price={l.price} originalPrice={l.originalPrice} />
+          </span>
         </li>
       ))}
     </ul>
@@ -234,7 +237,9 @@ export function SaleDialog({
             )}
             {free || o.price > 0 ? (
               <>
-                <Lines lines={quote(brand, o.price, free, applied)} />
+                <Lines
+                  lines={quote(brand, o.price, free, applied, o.originalPrice)}
+                />
                 <p className="flex justify-between border-t pt-3 font-bold">
                   Total <span>{formatPrice(free ? 0 : o.price)}</span>
                 </p>

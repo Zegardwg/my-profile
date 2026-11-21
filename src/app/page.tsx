@@ -1,4 +1,5 @@
 ﻿import { FeaturedPackages } from "@/features/catalog/components/featured-packages";
+import { StarterGuide } from "@/features/home/components/starter-guide";
 import Link from "next/link";
 import { AppHeader } from "@/components/layout/app-header";
 import { AppFooter } from "@/components/layout/app-footer";
@@ -13,6 +14,7 @@ export default function Home() {
       <main id="main-content" className="bg-white">
         <div className="page-container py-7 sm:py-12">
           <FeaturedPackages />
+          <StarterGuide />
           <nav
             aria-label="Bantuan pelanggan"
             className="mt-5 flex flex-wrap gap-x-7 border-t pt-2 text-sm font-medium text-primary"
@@ -25,12 +27,6 @@ export default function Home() {
             </Link>
             <Link className="inline-flex min-h-12 items-center" href="/trust">
               Pertanyaan pelanggan
-            </Link>
-            <Link
-              className="inline-flex min-h-12 items-center"
-              href="/promoter"
-            >
-              Profil promotor
             </Link>
           </nav>
         </div>

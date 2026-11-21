@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import {
   emptyOffer,
+  offerHighlights,
   initialCampaign,
   remainingStock,
   remainingClaims,
@@ -25,6 +26,41 @@ test("only XL and Smartfren purchases can add one free AXIS", () => {
   assert.ok(validCode(" xlSmart "));
   assert.ok(!validCode("XLSMART2"));
 });
+test("sale keeps the normal price on the invoice line and charges the selling price", () => {
+  const offer = { ...emptyOffer("xl"), price: 40000, originalPrice: 50000 };
+  assert.ok(offerSchema.safeParse(offer).success);
+  for (const originalPrice of [0, 39999, 40000, 50000.5])
+    assert.ok(!offerSchema.safeParse({ ...offer, originalPrice }).success);
+  const lines = quote("xl", offer.price, false, true, offer.originalPrice);
+  assert.deepEqual(lines, [
+    { brand: "xl", price: 40000, originalPrice: 50000, kind: "sale" },
+    { brand: "axis", price: 0, kind: "bonus" },
+  ]);
+});
+
+test("highlights compare verified stock, allow ties and skip missing measurements", () => {
+  const a = {
+    ...emptyOffer("xl"),
+    stock: 1,
+    verifiedAt: "2026-01-01",
+    price: 20000,
+    days: 30,
+    quota: 5,
+  };
+  const b = { ...a, brand: "axis", price: 10000, days: 10, quota: 8 };
+  const c = { ...b, brand: "smartfren", quota: 0 };
+  assert.deepEqual(offerHighlights([a, b, c], []), {
+    xl: ["Masa aktif terpanjang"],
+    axis: ["Harga terendah"],
+    smartfren: ["Harga terendah"],
+  });
+  const pending = { stage: "pending", lines: [{ brand: "axis" }] };
+  assert.deepEqual(
+    offerHighlights([a, b, { ...c, verifiedAt: "" }], [pending]),
+    { xl: [], axis: [], smartfren: [] },
+  );
+});
+
 test("paid and pending invoices reserve physical cards including bonuses", () => {
   const axis = { ...emptyOffer("axis"), stock: 4 };
   const lines = quote("xl", 25000, false, true);

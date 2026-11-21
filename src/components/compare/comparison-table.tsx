@@ -11,7 +11,7 @@ import {
 import { ProductMetadata } from "@/components/catalog/product-metadata";
 import { productInformationLabel } from "@/lib/product-information";
 import { brandNames } from "@/data/demo-products";
-import { formatPrice } from "@/lib/product-presentation";
+import { SalePrice } from "@/components/shared/sale-price";
 import type { Product } from "@/types/product";
 import { useComparison } from "./comparison-provider";
 
@@ -26,7 +26,12 @@ export function ComparisonTable() {
     { label: "Merek", content: (product) => brandNames[product.brand] },
     {
       label: "Harga / paket",
-      content: (product) => formatPrice(product.price),
+      content: (product) => (
+        <SalePrice
+          price={product.price}
+          originalPrice={product.originalPrice}
+        />
+      ),
     },
     { label: "Kuota utama", content: (product) => product.quotaGb + " GB" },
     {

@@ -40,6 +40,7 @@ export const productSchema = z
       .int("Harga harus berupa Rupiah bulat.")
       .min(0, "Harga tidak boleh negatif.")
       .max(100000000, "Harga maksimal Rp100.000.000."),
+    originalPrice: z.number().int().positive().max(100000000).optional(),
     quotaGb: z
       .number({ error: "Isi kuota berupa angka." })
       .min(0, "Kuota tidak boleh negatif.")
@@ -84,6 +85,15 @@ export const productSchema = z
     revision: z.number().int().min(1),
   })
   .superRefine((product, context) => {
+    if (
+      product.originalPrice !== undefined &&
+      product.originalPrice <= product.price
+    )
+      context.addIssue({
+        code: "custom",
+        path: ["originalPrice"],
+        message: "Harga normal harus lebih tinggi dari harga jual.",
+      });
     if (product.informationStatus === "verified") {
       if (!product.lastVerifiedAt)
         context.addIssue({
@@ -136,7 +146,9 @@ export function parseBackup(raw: string): CatalogBackup {
   } catch {
     throw new Error("JSON tidak valid. Pilih cadangan katalog XLSMART.");
   }
-  const result = backupSchema.safeParse(input, { error: z.locales.id().localeError });
+  const result = backupSchema.safeParse(input, {
+    error: z.locales.id().localeError,
+  });
   if (!result.success)
     throw new Error(
       "Cadangan tidak valid: " +

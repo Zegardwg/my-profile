@@ -7,6 +7,7 @@ export interface Product {
   brand: Brand;
   name: string;
   price: number;
+  originalPrice?: number;
   quotaGb: number;
   validityDays: number;
   benefits: readonly string[];

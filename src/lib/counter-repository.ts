@@ -143,7 +143,13 @@ export async function checkout(input: {
         throw Error("Harga berubah. Periksa total terbaru.");
       if (!free && redeem && (!c.bonus || input.brand === "axis"))
         throw Error("Bonus tidak tersedia untuk penawaran ini.");
-      const lines = quote(input.brand, offer?.price ?? 0, free, redeem);
+      const lines = quote(
+        input.brand,
+        offer?.price ?? 0,
+        free,
+        redeem,
+        offer?.originalPrice,
+      );
       for (const line of lines) {
         if (remainingStock(line.brand === "axis" ? axis : offer!, open) < 1)
           throw Error("Stok kartu yang dipilih sudah habis.");
